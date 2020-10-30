@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <%- JSON.stringify(customerInfo) %>
+    <br />
+    <h2>Buy Subscription</h2>
+
+    <input type="radio" id="basic" name="product" value="basic" />
+    <label for="basic">basic</label><br />
+    <input type="radio" id="pro" name="product" value="pro" />
+    <label for="pro">pro</label><br />
+
+    <button type="button" id="checkout-button">Buy Now</button>
+    <button type="button" id="portal-button">Manage Billing</button>
+    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+    <script>
+      var customerID = (<%- JSON.stringify(customerInfo) %>).id;
+      var email = <%- JSON.stringify(email) %>;
+      console.log(customerID);          
+   </script>
+
+    <script type="text/javascript" src="/js/account.js"></script>
+
+    
+  </body>
+</html>
