@@ -4,8 +4,27 @@ const Stripe = stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
 });
 
+// const createCheckoutSession = async(customerID, price)=>{
+//   console.log("acha", customerID, price);
+//   const session = await Stripe.checkout.sessions.create({
+//     mode: "subscription",
+//     payment_method_types: ["card"],
+//     customer: customerID,
+//     line_items: [
+//       {
+//         price,
+//         quantity: 1,
+//       },
+//     ],
 
-const createCheckoutSession = async(customerID, price)=>{
+//     success_url: `http://localhost:4242?session_id={CHECKOUT_SESSION_ID}`,
+//     cancel_url: "https://google.com",
+//   });
+
+//   return session;
+// }
+
+const createCheckoutSession = async (customerID, price) => {
   console.log("acha", customerID, price);
   const session = await Stripe.checkout.sessions.create({
     mode: "subscription",
@@ -17,21 +36,24 @@ const createCheckoutSession = async(customerID, price)=>{
         quantity: 1,
       },
     ],
+    subscription_data:{
+      trial_period_days: process.env.TRIAL_DAYS,
+    },
 
     success_url: `http://localhost:4242?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: "https://google.com",
   });
 
   return session;
-}
+};
 
-const createBillingSession = async (customer)=>{
+const createBillingSession = async (customer) => {
   var session = await Stripe.billingPortal.sessions.create({
     customer,
     return_url: "https://example.com/account",
   });
   return session;
-}
+};
 
 const getCustomerByID = async (id) => {
   const customer = await Stripe.customers.retrieve(id);
@@ -48,12 +70,13 @@ const addNewCustomer = async (email) => {
 };
 
 const createWebhook = (rawBody, sig) => {
-  console.log("hook",process.env.STRIPE_WEBHOOK_SECRET);
-const event = Stripe.webhooks.constructEvent(
-  rawBody,sig,
-  process.env.STRIPE_WEBHOOK_SECRET
-);
-return event;
+  console.log("hook", process.env.STRIPE_WEBHOOK_SECRET);
+  const event = Stripe.webhooks.constructEvent(
+    rawBody,
+    sig,
+    process.env.STRIPE_WEBHOOK_SECRET
+  );
+  return event;
 };
 
 module.exports = {
@@ -61,5 +84,5 @@ module.exports = {
   addNewCustomer,
   createCheckoutSession,
   createBillingSession,
-  createWebhook
+  createWebhook,
 };

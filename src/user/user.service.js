@@ -1,7 +1,8 @@
-const addUser = (User) => ({email, billingID, planType}) => {
+const addUser = (User) => ({email, billingID, plan, endDate}) => {
   // if (!email || !billingID )
   //   throw new Error("Missing Data. Please provide values for title, author.");
-  const book = new User({ email, billingID, planType });
+  
+  const book = new User({ email, billingID, plan, endDate });
   return book.save();
 };
 
@@ -13,8 +14,12 @@ const getUserByEmail = (User) => async (email) => {
   return await User.findOne({ email });
 };
 
-const updatePlan = (User) => (email, planType) => {
-  return User.findOneAndUpdate({ email, planType });
+const getUserByBillingID = (User) => async (billingID) => {
+  return await User.findOne({ billingID });
+};
+
+const updatePlan = (User) => (email, plan) => {
+  return User.findOneAndUpdate({ email, plan });
 };
 
 module.exports = (User) => {
@@ -23,5 +28,6 @@ module.exports = (User) => {
     getUsers: getUsers(User),
     getUserByEmail: getUserByEmail(User),
     updatePlan: updatePlan(User),
+    getUserByBillingID: getUserByBillingID(User)
   };
 };

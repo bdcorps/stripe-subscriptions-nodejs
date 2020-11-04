@@ -4,8 +4,9 @@ var Schema = mongoose.Schema;
 var userSchema = new Schema({
   email: String,
   billingID: String,
-  planType: { type: String, enum: ["none","trial", "basic", "pro"], default: "none" },
-  endDate: Date
+  plan: { type: String, enum: ["none", "basic", "pro"], default: "none" },
+  hasTrial: {type: Boolean, default: false},
+  endDate: {type: Date, default: null},
 });
 
 var userModel = mongoose.model("user", userSchema, "user");
