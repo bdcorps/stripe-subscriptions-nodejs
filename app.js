@@ -4,8 +4,11 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const UserService = require("./src/user");
 const Stripe = require("./src/connect/stripe");
+const setCurrentUser = require("./src/middleware/setCurrentUser");
+const hasPlan = require("./src/middleware/hasPlan");
 
 const app = express();
+app.use(setCurrentUser);
 
 // app.use(
 //   express.json({
@@ -36,18 +39,28 @@ app.post("/test", function (req, res, next) {
 app.use(express.static("public"));
 app.engine("html", require("ejs").renderFile);
 
-const stripe = require("stripe");
-
-const Stripe1 = stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2020-08-27",
-});
-
 const productToPriceMap = {
   basic: process.env.PRODUCT_BASIC,
   pro: process.env.PRODUCT_PRO,
 };
 
-console.log("thing", productToPriceMap["basic"]);
+app.post("/none", hasPlan("none"), async function (req, res, next) {
+  res
+    .status(200)
+    .send("Success! You are viewing content that can only be seen by customers on the 'none' plan.");
+});
+
+app.post("/basic", hasPlan("basic"), async function (req, res, next) {
+  res
+    .status(200)
+    .send("Success! You are viewing content that can only be seen by customers on the 'basic' plan.");
+});
+
+app.post("/pro", hasPlan("pro"), async function (req, res, next) {
+  res
+    .status(200)
+    .send("Success! You are viewing content that can only be seen by customers on the 'pro' plan.");
+});
 
 app.post("/user", async function (req, res, next) {
   const { email, billingID } = req.body;
@@ -91,7 +104,7 @@ app.get("/user", async function (req, res, next) {
 });
 
 app.get("/", function (req, res) {
-  res.render("signin.ejs");
+  res.render("login.ejs");
 });
 
 app.post("/login", async function (req, res) {
@@ -246,22 +259,20 @@ app.post("/webhook", async (req, res) => {
 
       if (isOnTrial) {
         user.hasTrial = true;
-        user.endDate = new Date(data.current_period_end*1000);
+        user.endDate = new Date(data.current_period_end * 1000);
       } else if (data.status === "active") {
         user.hasTrial = false;
-        user.endDate = new Date(data.current_period_end*1000);
-
+        user.endDate = new Date(data.current_period_end * 1000);
       }
-      
-      
-      if (data.canceled_at){
+
+      if (data.canceled_at) {
         //cancelled
         console.log("You just canceled the subscription" + data.canceled_at);
         user.plan = "none";
         user.hasTrial = false;
         user.endDate = null;
       }
-      console.log("actual",user.hasTrial, data.current_period_end, user.plan);
+      console.log("actual", user.hasTrial, data.current_period_end, user.plan);
 
       await user.save();
       console.log("customer changed", JSON.stringify(data));
