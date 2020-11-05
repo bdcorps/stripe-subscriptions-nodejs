@@ -1,6 +1,6 @@
 require("dotenv").config();
 require("./src/connect/mongodb");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");var cookieParser = require('cookie-parser');
 const express = require("express");
 const UserService = require("./src/user");
 const Stripe = require("./src/connect/stripe");
@@ -8,21 +8,9 @@ const setCurrentUser = require("./src/middleware/setCurrentUser");
 const hasPlan = require("./src/middleware/hasPlan");
 
 const app = express();
-app.use(setCurrentUser);
+app.use(cookieParser());
 
-// app.use(
-//   express.json({
-//     // We need the raw body to verify webhook signatures.
-//     // Let's compute it only when hitting the Stripe webhook endpoint.
-//     verify: function (req, res, buf) {
-//       if (req.originalUrl.startsWith("/webhook")) {
-//         req.rawBody = buf.toString();
-//       }else{
-//         next();
-//       }
-//     },
-//   })
-// );
+// app.use(setCurrentUser);
 
 app.use("/webhook", bodyParser.raw({ type: "application/json" }));
 
@@ -44,22 +32,23 @@ const productToPriceMap = {
   pro: process.env.PRODUCT_PRO,
 };
 
-app.post("/none", hasPlan("none"), async function (req, res, next) {
+app.get("/none", [setCurrentUser, hasPlan("none")], async function (req, res, next) {
   res
     .status(200)
-    .send("Success! You are viewing content that can only be seen by customers on the 'none' plan.");
+    .render("none.ejs");
+      
 });
 
-app.post("/basic", hasPlan("basic"), async function (req, res, next) {
+app.get("/basic", [setCurrentUser, hasPlan("basic")], async function (req, res, next) {
   res
     .status(200)
-    .send("Success! You are viewing content that can only be seen by customers on the 'basic' plan.");
+    .render("basic.ejs");
 });
 
-app.post("/pro", hasPlan("pro"), async function (req, res, next) {
+app.get("/pro", [setCurrentUser, hasPlan("pro")], async function (req, res, next) {
   res
     .status(200)
-    .send("Success! You are viewing content that can only be seen by customers on the 'pro' plan.");
+    .render("pro.ejs");
 });
 
 app.post("/user", async function (req, res, next) {
@@ -109,7 +98,7 @@ app.get("/", function (req, res) {
 
 app.post("/login", async function (req, res) {
   const { email } = req.body;
-  console.log(req.body);
+  console.log("email", email);
 
   let customer = await UserService.getUserByEmail(email);
   let customerInfo = {};
@@ -159,11 +148,20 @@ app.post("/login", async function (req, res) {
       `The existing ID for ${email} is ${JSON.stringify(customerInfo)}`
     );
   }
-  res.render("account.ejs", {
+
+  res.cookie("email", email);
+
+  res.render("newaccount.ejs", {
     customer,
     customerInfo,
     email,
   });
+});
+
+app.get("/cookie", async (req, res) => {
+  console.log(req.cookies["cookie"]);
+  res.cookie("cookie", "monster");
+  res.status(200).json("as");
 });
 
 app.post("/checkout", async (req, res) => {
@@ -212,17 +210,17 @@ app.post("/portal", async (req, res) => {
 app.post("/webhook", async (req, res) => {
   let event;
 
-  // console.log(req.body);
-  // console.log("signature is ", req.header("Stripe-Signature"));
+  console.log(req.body);
+  console.log("signature is ", req.header("Stripe-Signature"));
 
   try {
-    // event = Stripe.createWebhook(req.rawBody,
-    //   req.header("Stripe-Signature"));
-    event = Stripe1.webhooks.constructEvent(
-      req.body,
-      req.header("Stripe-Signature"),
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+    event = Stripe.createWebhook(req.body,
+      req.header("Stripe-Signature"));
+    // event = Stripe.webhooks.constructEvent(
+    //   req.body,
+    //   req.header("Stripe-Signature"),
+    //   process.env.STRIPE_WEBHOOK_SECRET
+    // );
   } catch (err) {
     console.log(err);
     return res.sendStatus(400);

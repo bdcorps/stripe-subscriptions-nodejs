@@ -13,11 +13,11 @@ $(document).ready(function () {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "email": email
       },
       body: JSON.stringify({
         product,
-        customerID,
-        email,
+        customerID
       }),
     })
       .then((result) => result.json())
@@ -29,6 +29,7 @@ $(document).ready(function () {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "email": email
       },
       body: JSON.stringify({
         customer: customerID,
