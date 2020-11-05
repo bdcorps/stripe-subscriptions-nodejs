@@ -151,7 +151,7 @@ app.post("/login", async function (req, res) {
 
   res.cookie("email", email);
 
-  res.render("newaccount.ejs", {
+  res.render("account.ejs", {
     customer,
     customerInfo,
     email,
