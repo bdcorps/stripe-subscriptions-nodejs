@@ -4,26 +4,6 @@ const Stripe = stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2020-08-27",
 });
 
-// const createCheckoutSession = async(customerID, price)=>{
-//   console.log("acha", customerID, price);
-//   const session = await Stripe.checkout.sessions.create({
-//     mode: "subscription",
-//     payment_method_types: ["card"],
-//     customer: customerID,
-//     line_items: [
-//       {
-//         price,
-//         quantity: 1,
-//       },
-//     ],
-
-//     success_url: `http://localhost:4242?session_id={CHECKOUT_SESSION_ID}`,
-//     cancel_url: "https://google.com",
-//   });
-
-//   return session;
-// }
-
 const createCheckoutSession = async (customerID, price) => {
   console.log("acha", customerID, price);
   const session = await Stripe.checkout.sessions.create({
@@ -70,7 +50,6 @@ const addNewCustomer = async (email) => {
 };
 
 const createWebhook = (rawBody, sig) => {
-  console.log("hook", process.env.STRIPE_WEBHOOK_SECRET);
   const event = Stripe.webhooks.constructEvent(
     rawBody,
     sig,

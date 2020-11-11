@@ -1,6 +1,7 @@
 require("dotenv").config();
 require("./src/connect/mongodb");
-const bodyParser = require("body-parser");var cookieParser = require('cookie-parser');
+const bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
 const express = require("express");
 const UserService = require("./src/user");
 const Stripe = require("./src/connect/stripe");
@@ -10,19 +11,11 @@ const hasPlan = require("./src/middleware/hasPlan");
 const app = express();
 app.use(cookieParser());
 
-// app.use(setCurrentUser);
-
 app.use("/webhook", bodyParser.raw({ type: "application/json" }));
 
 app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.post("/test", function (req, res, next) {
-  console.log(`rawBody: ${req.rawBody}`);
-  console.log(`parsed Body: ${JSON.stringify(req.body)}`);
-  res.sendStatus(200);
-});
 
 app.use(express.static("public"));
 app.engine("html", require("ejs").renderFile);
@@ -32,23 +25,28 @@ const productToPriceMap = {
   pro: process.env.PRODUCT_PRO,
 };
 
-app.get("/none", [setCurrentUser, hasPlan("none")], async function (req, res, next) {
-  res
-    .status(200)
-    .render("none.ejs");
-      
+app.get("/none", [setCurrentUser, hasPlan("none")], async function (
+  req,
+  res,
+  next
+) {
+  res.status(200).render("none.ejs");
 });
 
-app.get("/basic", [setCurrentUser, hasPlan("basic")], async function (req, res, next) {
-  res
-    .status(200)
-    .render("basic.ejs");
+app.get("/basic", [setCurrentUser, hasPlan("basic")], async function (
+  req,
+  res,
+  next
+) {
+  res.status(200).render("basic.ejs");
 });
 
-app.get("/pro", [setCurrentUser, hasPlan("pro")], async function (req, res, next) {
-  res
-    .status(200)
-    .render("pro.ejs");
+app.get("/pro", [setCurrentUser, hasPlan("pro")], async function (
+  req,
+  res,
+  next
+) {
+  res.status(200).render("pro.ejs");
 });
 
 app.post("/user", async function (req, res, next) {
@@ -158,30 +156,23 @@ app.post("/login", async function (req, res) {
   });
 });
 
-app.get("/cookie", async (req, res) => {
-  console.log(req.cookies["cookie"]);
-  res.cookie("cookie", "monster");
-  res.status(200).json("as");
-});
-
 app.post("/checkout", async (req, res) => {
   let { product, customerID, email } = req.body;
 
   const price = productToPriceMap[product];
 
   try {
-    console.log("a", product, price, email, customerID);
     const session = await Stripe.createCheckoutSession(customerID, price);
 
-    // var ms =
-    //   new Date().getTime() + 1000 * 60 * 60 * 24 * process.env.TRIAL_DAYS;
-    // var n = new Date(ms);
+    var ms =
+      new Date().getTime() + 1000 * 60 * 60 * 24 * process.env.TRIAL_DAYS;
+    var n = new Date(ms);
 
-    // let customer = await UserService.getUserByEmail(email);
-    // customer.plan = product;
-    // customer.hasTrial = true;
-    // customer.endDate = n;
-    // customer.save();
+    let customer = await UserService.getUserByEmail(email);
+    customer.plan = product;
+    customer.hasTrial = true;
+    customer.endDate = n;
+    customer.save();
 
     res.send({
       sessionId: session.id,
@@ -214,19 +205,12 @@ app.post("/webhook", async (req, res) => {
   console.log("signature is ", req.header("Stripe-Signature"));
 
   try {
-    event = Stripe.createWebhook(req.body,
-      req.header("Stripe-Signature"));
-    // event = Stripe.webhooks.constructEvent(
-    //   req.body,
-    //   req.header("Stripe-Signature"),
-    //   process.env.STRIPE_WEBHOOK_SECRET
-    // );
+    event = Stripe.createWebhook(req.body, req.header("Stripe-Signature"));
   } catch (err) {
     console.log(err);
     return res.sendStatus(400);
   }
 
-  // Extract the object from the event.
   const data = event.data.object;
 
   console.log(event.type, data);
@@ -276,7 +260,6 @@ app.post("/webhook", async (req, res) => {
       console.log("customer changed", JSON.stringify(data));
       break;
     default:
-    // Unexpected event type
   }
   res.sendStatus(200);
 });

@@ -3,10 +3,9 @@ body {
   height: 100%;
 }
 
-
 .btn-primary {
   background-color: #5000ff;
 }
 .btn-primary:hover {
-  background-color: rgb(77, 2, 238);
+  background-color: #4d02ee;
 }
