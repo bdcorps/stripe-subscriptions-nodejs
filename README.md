@@ -9,4 +9,14 @@ Stripe Subscriptions Billing
 npm i
 npm start
 ```
-# stripe-subscriptions
+
+# Environmental Variables
+```
+STRIPE_SECRET_KEY=sk_test_51H8rImAkSQQctVkLmiefLPUxZhQdclj8BqTZuvHelgyQWum4COBNcIYP8viiH5dFBrEhM69Yt7Tc0hj8o26k9Pbs00tIYJkZvS
+PRODUCT_BASIC=price_1HcIFWAkSQQctVkLizPQ2Oum
+PRODUCT_PRO=price_1HdI8dAkSQQctVkLD9IeOYjS
+MONGODB=mongodb://localhost:27017/users
+STRIPE_WEBHOOK_SECRET=whsec_rYanPBSdQSswHjizrBz2pHAo6iYa2Ows
+TRIAL_DAYS=14
+```
+
