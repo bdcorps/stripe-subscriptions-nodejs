@@ -1,4 +1,4 @@
-Stripe Subscriptions Billing
+# Recurring Subscriptions Billing using Stripe API
 
 ## Installation
 - Create a new Stripe account
