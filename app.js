@@ -49,46 +49,46 @@ app.get("/pro", [setCurrentUser, hasPlan("pro")], async function (
   res.status(200).render("pro.ejs");
 });
 
-app.post("/user", async function (req, res, next) {
-  const { email, billingID } = req.body;
+// app.post("/user", async function (req, res, next) {
+//   const { email, billingID } = req.body;
 
-  try {
-    const user = await UserService.addUser(email, billingID);
-    res.json(user);
-  } catch (e) {
-    next(e);
-  }
-});
+//   try {
+//     const user = await UserService.addUser(email, billingID);
+//     res.json(user);
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
-app.get("/user", async function (req, res, next) {
-  const { email } = req.body;
+// app.get("/user", async function (req, res, next) {
+//   const { email } = req.body;
 
-  console.log(email);
+//   console.log(email);
 
-  try {
-    const customer = await UserService.getUserByEmail(email);
-    console.log(customer);
-    let isTrialExpired =
-      customer.hasTrial &&
-      customer.plan != "none" &&
-      customer.endDate < new Date().getTime;
+//   try {
+//     const customer = await UserService.getUserByEmail(email);
+//     console.log(customer);
+//     let isTrialExpired =
+//       customer.hasTrial &&
+//       customer.plan != "none" &&
+//       customer.endDate < new Date().getTime;
 
-    if (isTrialExpired) {
-      console.log("trial expired");
-    } else {
-      console.log(
-        "no trial information",
-        customer.hasTrial,
-        customer.plan != "none",
-        customer.endDate < new Date().getTime
-      );
-    }
+//     if (isTrialExpired) {
+//       console.log("trial expired");
+//     } else {
+//       console.log(
+//         "no trial information",
+//         customer.hasTrial,
+//         customer.plan != "none",
+//         customer.endDate < new Date().getTime
+//       );
+//     }
 
-    res.json(customer);
-  } catch (e) {
-    next(e);
-  }
-});
+//     res.json(customer);
+//   } catch (e) {
+//     next(e);
+//   }
+// });
 
 app.get("/", function (req, res) {
   res.render("login.ejs");
@@ -156,8 +156,9 @@ app.post("/login", async function (req, res) {
   });
 });
 
-app.post("/checkout", async (req, res) => {
-  let { product, customerID, email } = req.body;
+app.post("/checkout", setCurrentUser, async (req, res) => {
+  let customer = req.user;
+  let { product, customerID } = req.body;
 
   const price = productToPriceMap[product];
 
@@ -168,7 +169,6 @@ app.post("/checkout", async (req, res) => {
       new Date().getTime() + 1000 * 60 * 60 * 24 * process.env.TRIAL_DAYS;
     var n = new Date(ms);
 
-    let customer = await UserService.getUserByEmail(email);
     customer.plan = product;
     customer.hasTrial = true;
     customer.endDate = n;
@@ -188,7 +188,7 @@ app.post("/checkout", async (req, res) => {
   }
 });
 
-app.post("/portal", async (req, res) => {
+app.post("/portal", setCurrentUser, async (req, res) => {
   let { customer } = req.body;
   console.log("customer", customer);
 
@@ -200,9 +200,6 @@ app.post("/portal", async (req, res) => {
 
 app.post("/webhook", async (req, res) => {
   let event;
-
-  console.log(req.body);
-  console.log("signature is ", req.header("Stripe-Signature"));
 
   try {
     event = Stripe.createWebhook(req.body, req.header("Stripe-Signature"));

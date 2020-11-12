@@ -13,7 +13,7 @@ $(document).ready(function () {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "email": email
+        // "email": email
       },
       body: JSON.stringify({
         product,
