@@ -1,15 +1,7 @@
 body {
-  display: -ms-flexbox;
-  display: -webkit-box;
+  height: 100vh;
   display: flex;
-  -ms-flex-align: center;
-  -ms-flex-pack: center;
-  -webkit-box-align: center;
   align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
   background-color: #f5f5f5;
 }
 
@@ -20,10 +12,6 @@ body {
   margin: 0 auto;
 }
 
-.form-login .checkbox {
-  font-weight: 400;
-}
-
 .form-login .form-control {
   position: relative;
   box-sizing: border-box;
@@ -32,18 +20,6 @@ body {
   font-size: 16px;
 }
 
-.form-login .form-control:focus {
-  z-index: 2;
-}
-
 .form-login input[type="email"] {
   margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.form-login input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
 }
