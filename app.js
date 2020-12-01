@@ -3,19 +3,29 @@ require("./src/connect/mongodb");
 const bodyParser = require("body-parser");
 var cookieParser = require("cookie-parser");
 const express = require("express");
+var session = require("express-session");
 const UserService = require("./src/user");
 const Stripe = require("./src/connect/stripe");
 const setCurrentUser = require("./src/middleware/setCurrentUser");
 const hasPlan = require("./src/middleware/hasPlan");
 
 const app = express();
-app.use(cookieParser());
+app.use(
+  session({
+    secret: "secr3t",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+
+// app.use(cookieParser());
 
 app.use("/webhook", bodyParser.raw({ type: "application/json" }));
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.use(express.static("public"));
 app.engine("html", require("ejs").renderFile);
@@ -147,7 +157,7 @@ app.post("/login", async function (req, res) {
     );
   }
 
-  res.cookie("email", email);
+  req.session.email = email;
 
   res.render("account.ejs", {
     customer,

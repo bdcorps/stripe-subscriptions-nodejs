@@ -1,7 +1,7 @@
 const UserService = require("../user");
 
 module.exports = async function setCurrentUser(req, res, next) {
-  const { email } = req.cookies;
+  const { email } = req.session;
 
   if (email) {
     user = await UserService.getUserByEmail(email);
