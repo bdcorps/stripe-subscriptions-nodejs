@@ -271,4 +271,6 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-app.listen(4242, () => console.log(`Listening on port ${4242}!`));
+var port = process.env.PORT || 3005;
+
+app.listen(port, () => console.log(`Listening on port ${port}!`));
