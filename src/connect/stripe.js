@@ -16,12 +16,12 @@ const createCheckoutSession = async (customerID, price) => {
         quantity: 1,
       },
     ],
-    subscription_data:{
+    subscription_data: {
       trial_period_days: process.env.TRIAL_DAYS,
     },
 
-    success_url: `http://localhost:4242?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: "https://google.com",
+    success_url: `${process.env.DOMAIN}?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.DOMAIN}`,
   });
 
   return session;
