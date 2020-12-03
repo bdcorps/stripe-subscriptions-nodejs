@@ -1,44 +1,44 @@
 $(document).ready(function () {
-  var publishableKey = "pk_test_51H8rImAkSQQctVkLFFZmJad2KISXWeDzpOeJ6ZnbsruFA9yRdzR1VeyjvkQnHn2j5RUoxdhQHeeWmucZrJ7MZLqR00AwkWR4SW";
-  
-  var stripe = Stripe(
-    publishableKey  );
-  var checkoutButton = $("#checkout-button");
-  var portalButton = $("#portal-button");
+  const publishableKey = 'pk_test_51H8rImAkSQQctVkLFFZmJad2KISXWeDzpOeJ6ZnbsruFA9yRdzR1VeyjvkQnHn2j5RUoxdhQHeeWmucZrJ7MZLqR00AwkWR4SW'
+
+  const stripe = Stripe(
+    publishableKey)
+  const checkoutButton = $('#checkout-button')
+  const portalButton = $('#portal-button')
 
   checkoutButton.click(function () {
-    var product = $("input[name='product']:checked").val();
+    const product = $("input[name='product']:checked").val()
 
-    fetch("/checkout", {
-      method: "POST",
+    fetch('/checkout', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
         // "email": email
       },
       body: JSON.stringify({
         product,
         customerID
-      }),
+      })
     })
       .then((result) => result.json())
-      .then(({sessionId}) => stripe.redirectToCheckout({ sessionId }));
-  });
+      .then(({ sessionId }) => stripe.redirectToCheckout({ sessionId }))
+  })
 
   portalButton.click(function () {
-    var requestOptions = {
-      method: "POST",
+    const requestOptions = {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "email": email
+        'Content-Type': 'application/json',
+        email: email
       },
       body: JSON.stringify({
-        customer: customerID,
-      }),
-    };
+        customer: customerID
+      })
+    }
 
-    fetch("/portal", requestOptions)
+    fetch('/portal', requestOptions)
       .then((response) => response.json())
       .then((result) => window.location.replace(result.url))
-      .catch((error) => console.log("error", error));
-  });
-});
+      .catch((error) => console.log('error', error))
+  })
+})
