@@ -5,7 +5,7 @@
 Clone the project at: [https://github.com/bdcorps/stripe-subscriptions-nodejs](https://github.com/bdcorps/stripe-subscriptions-nodejs)
 
 ```bash
-git clone [https://github.com/bdcorps/stripe-subscriptions-nodejs](https://github.com/bdcorps/stripe-subscriptions-nodejs)
+git clone https://github.com/bdcorps/stripe-subscriptions-nodejs
 ```
 
 ## Setting up the project
