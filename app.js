@@ -102,6 +102,12 @@ app.get('/', function (req, res) {
   res.render('login.ejs')
 })
 
+app.get('/account', function (req, res) {
+  let { email } = req.session
+  let customer = await UserService.getUserByEmail(email)
+  res.render('account.ejs', { customer })
+})
+
 app.post('/login', async function (req, res) {
   const { email } = req.body
   console.log('email', email)
@@ -158,11 +164,13 @@ app.post('/login', async function (req, res) {
 
   req.session.email = email
 
-  res.render('account.ejs', {
-    customer,
-    customerInfo,
-    email
-  })
+  // res.render('account.ejs', {
+  //   customer,
+  //   customerInfo,
+  //   email
+  // })
+
+  res.redirect('/account')
 })
 
 app.post('/checkout', setCurrentUser, async (req, res) => {
@@ -197,7 +205,7 @@ app.post('/checkout', setCurrentUser, async (req, res) => {
   }
 })
 
-app.post('/portal', setCurrentUser, async (req, res) => {
+app.post('/billing', setCurrentUser, async (req, res) => {
   const { customer } = req.body
   console.log('customer', customer)
 
@@ -227,7 +235,31 @@ app.post('/webhook', async (req, res) => {
     case 'invoice.paid':
       break
     case 'customer.subscription.created':
-      // console.log("new subscription added" + JSON.stringify);
+      console.log("new subscription added" + JSON.stringify);
+      const user = await UserService.getUserByBillingID(data.customer)
+
+      if (data.plan.id == process.env.PRODUCT_BASIC) {
+        console.log('You are talking about basic product')
+        user.plan = 'basic'
+      }
+
+      if (data.plan.id == process.env.PRODUCT_PRO) {
+        console.log('You are talking about pro product')
+        user.plan = 'pro'
+      }
+
+      const isOnTrial = data.status === 'trialing'
+
+      if (isOnTrial) {
+        user.hasTrial = true
+        user.endDate = new Date(data.current_period_end * 1000)
+      } else if (data.status === 'active') {
+        user.hasTrial = false
+        user.endDate = new Date(data.current_period_end * 1000)
+      }
+
+      await user.save()
+
       break
     case 'customer.subscription.updated':
       // started trial

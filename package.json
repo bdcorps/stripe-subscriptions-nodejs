@@ -1,14 +1,13 @@
 {
   "name": "stripe-subscriptions-nodejs",
   "version": "1.0.0",
-  "author": "saabase.dev",
+  "author": "sssaini",
   "description": "Add Stripe Subscriptions Payments using Node.js",
   "main": "index.js",
   "scripts": {
     "start": "nodemon app.js",
     "lint": "standard",
-    "lint:fix": "standard --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint:fix": "standard --fix"
   },
   "license": "ISC",
   "dependencies": {

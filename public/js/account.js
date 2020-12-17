@@ -4,7 +4,7 @@ $(document).ready(function () {
   const stripe = Stripe(
     publishableKey)
   const checkoutButton = $('#checkout-button')
-  const portalButton = $('#portal-button')
+  const manageBillingButton = $('#manage-billing-button')
 
   checkoutButton.click(function () {
     const product = $("input[name='product']:checked").val()
@@ -17,14 +17,14 @@ $(document).ready(function () {
       },
       body: JSON.stringify({
         product,
-        customerID
+        customerID: customer.billingID
       })
     })
       .then((result) => result.json())
       .then(({ sessionId }) => stripe.redirectToCheckout({ sessionId }))
   })
 
-  portalButton.click(function () {
+  manageBillingButton.click(function () {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -32,11 +32,11 @@ $(document).ready(function () {
         email: email
       },
       body: JSON.stringify({
-        customer: customerID
+        customer: customer.billingID
       })
     }
 
-    fetch('/portal', requestOptions)
+    fetch('/billing', requestOptions)
       .then((response) => response.json())
       .then((result) => window.location.replace(result.url))
       .catch((error) => console.log('error', error))

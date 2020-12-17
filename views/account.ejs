@@ -19,22 +19,6 @@
     <link href="./css/common.css" rel="stylesheet" />
     <link href="./css/account.css" rel="stylesheet" />
 
-    <style>
-      .bd-placeholder-img {
-        font-size: 1.125rem;
-        text-anchor: middle;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
-
-      @media (min-width: 768px) {
-        .bd-placeholder-img-lg {
-          font-size: 3.5rem;
-        }
-      }
-    </style>
     <!-- Custom styles for this template -->
     <link href="account.css" rel="stylesheet" />
   </head>
@@ -43,7 +27,7 @@
     <main role="main" class="flex-shrink-0">
       <div class="container">
         <h1 class="mt-5">Account Dashboard</h1>
-        <p class="lead">Hi <%- email %></p>
+        <p class="lead">Hi <%- customer.email %></p>
 
         <%if (customer.plan == "none") { %>
         <p class="lead">
@@ -116,8 +100,6 @@
     ></script>
     <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
     <script>
-      var customerID = (<%- JSON.stringify(customerInfo) %>).id;
-      var email = <%- JSON.stringify(email) %>;
       var customer = <%- JSON.stringify(customer) %>;
       console.log(customer);
     </script>
