@@ -102,7 +102,7 @@ app.get('/', function (req, res) {
   res.render('login.ejs')
 })
 
-app.get('/account', function (req, res) {
+app.get('/account', async function (req, res) {
   let { email } = req.session
   let customer = await UserService.getUserByEmail(email)
   res.render('account.ejs', { customer })
