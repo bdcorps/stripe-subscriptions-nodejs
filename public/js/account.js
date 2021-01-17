@@ -29,7 +29,7 @@ $(document).ready(function () {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        email: email
+        email: customer.email
       },
       body: JSON.stringify({
         customer: customer.billingID
