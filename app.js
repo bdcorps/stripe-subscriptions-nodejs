@@ -247,15 +247,8 @@ app.post('/webhook', async (req, res) => {
         user.plan = 'pro'
       }
 
-      const isOnTrial = data.status === 'trialing'
-
-      if (isOnTrial) {
-        user.hasTrial = true
-        user.endDate = new Date(data.current_period_end * 1000)
-      } else if (data.status === 'active') {
-        user.hasTrial = false
-        user.endDate = new Date(data.current_period_end * 1000)
-      }
+      user.hasTrial = true
+      user.endDate = new Date(data.current_period_end * 1000)
 
       await user.save()
 
