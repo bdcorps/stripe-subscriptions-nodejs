@@ -234,16 +234,15 @@ app.post('/webhook', async (req, res) => {
       break
     case 'invoice.paid':
       break
-    case 'customer.subscription.created':
-      console.log("new subscription added" + JSON.stringify);
+    case 'customer.subscription.created': {
       const user = await UserService.getUserByBillingID(data.customer)
 
-      if (data.plan.id == process.env.PRODUCT_BASIC) {
+      if (data.plan.id === process.env.PRODUCT_BASIC) {
         console.log('You are talking about basic product')
         user.plan = 'basic'
       }
 
-      if (data.plan.id == process.env.PRODUCT_PRO) {
+      if (data.plan.id === process.env.PRODUCT_PRO) {
         console.log('You are talking about pro product')
         user.plan = 'pro'
       }
@@ -261,7 +260,8 @@ app.post('/webhook', async (req, res) => {
       await user.save()
 
       break
-    case 'customer.subscription.updated':
+    }
+    case 'customer.subscription.updated': {
       // started trial
       const user = await UserService.getUserByBillingID(data.customer)
 
@@ -270,7 +270,7 @@ app.post('/webhook', async (req, res) => {
         user.plan = 'basic'
       }
 
-      if (data.plan.id == process.env.PRODUCT_PRO) {
+      if (data.plan.id === process.env.PRODUCT_PRO) {
         console.log('You are talking about pro product')
         user.plan = 'pro'
       }
@@ -297,6 +297,7 @@ app.post('/webhook', async (req, res) => {
       await user.save()
       console.log('customer changed', JSON.stringify(data))
       break
+    }
     default:
   }
   res.sendStatus(200)
