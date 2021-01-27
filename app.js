@@ -64,7 +64,11 @@ app.get('/', function (req, res) {
 app.get('/account', async function (req, res) {
   let { email } = req.session
   let customer = await UserService.getUserByEmail(email)
-  res.render('account.ejs', { customer })
+  if (!customer) {
+    res.redirect('/')
+  } else {
+    res.render('account.ejs', { customer })
+  }
 })
 
 app.post('/login', async function (req, res) {
