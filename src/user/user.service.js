@@ -1,5 +1,5 @@
 const addUser = (User) => ({ email, billingID, plan, endDate }) => {
-  if (!email || !billingID || !plan || !endDate) { throw new Error('Missing Data. Please provide values for email, billingID, plan, endDate') }
+  if (!email || !billingID || !plan) { throw new Error('Missing Data. Please provide values for email, billingID, plan') }
 
   const user = new User({ email, billingID, plan, endDate })
   return user.save()

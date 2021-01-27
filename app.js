@@ -1,7 +1,6 @@
 require('dotenv').config()
 require('./src/connect/mongodb')
 const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
 const express = require('express')
 const session = require('express-session')
 const UserService = require('./src/user')
@@ -17,8 +16,6 @@ app.use(
     saveUninitialized: true
   })
 )
-
-// app.use(cookieParser());
 
 app.use('/webhook', bodyParser.raw({ type: 'application/json' }))
 
@@ -56,47 +53,6 @@ app.get('/pro', [setCurrentUser, hasPlan('pro')], async function (
 ) {
   res.status(200).render('pro.ejs')
 })
-
-// app.post("/user", async function (req, res, next) {
-//   const { email, billingID } = req.body;
-
-//   try {
-//     const user = await UserService.addUser(email, billingID);
-//     res.json(user);
-//   } catch (e) {
-//     next(e);
-//   }
-// });
-
-// app.get("/user", async function (req, res, next) {
-//   const { email } = req.body;
-
-//   console.log(email);
-
-//   try {
-//     const customer = await UserService.getUserByEmail(email);
-//     console.log(customer);
-//     let isTrialExpired =
-//       customer.hasTrial &&
-//       customer.plan != "none" &&
-//       customer.endDate < new Date().getTime;
-
-//     if (isTrialExpired) {
-//       console.log("trial expired");
-//     } else {
-//       console.log(
-//         "no trial information",
-//         customer.hasTrial,
-//         customer.plan != "none",
-//         customer.endDate < new Date().getTime
-//       );
-//     }
-
-//     res.json(customer);
-//   } catch (e) {
-//     next(e);
-//   }
-// });
 
 app.get('/', function (req, res) {
   res.render('login.ejs')
