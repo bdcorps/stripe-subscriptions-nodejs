@@ -3,19 +3,22 @@ require('./src/connect/mongodb')
 const bodyParser = require('body-parser')
 const express = require('express')
 const session = require('express-session')
+var MemoryStore = require('memorystore')(session)
 const UserService = require('./src/user')
 const Stripe = require('./src/connect/stripe')
 const setCurrentUser = require('./src/middleware/setCurrentUser')
 const hasPlan = require('./src/middleware/hasPlan')
 
 const app = express()
-app.use(
-  session({
-    secret: 'secr3t',
-    resave: false,
-    saveUninitialized: true
-  })
-)
+app.use(session({
+  saveUninitialized: false,
+  cookie: { maxAge: 86400000 },
+  store: new MemoryStore({
+    checkPeriod: 86400000 // prune expired entries every 24h
+  }),
+  resave: false,
+  secret: 'keyboard cat'
+}))
 
 app.use('/webhook', bodyParser.raw({ type: 'application/json' }))
 
