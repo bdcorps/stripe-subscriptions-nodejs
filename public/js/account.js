@@ -12,8 +12,8 @@ $(document).ready(function () {
     fetch('/checkout', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
-        "email": customer.email
+        'Content-Type': 'application/json',
+        'email': customer.email
       },
       body: JSON.stringify({
         product,
